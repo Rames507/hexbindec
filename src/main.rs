@@ -26,10 +26,11 @@ fn get_number_from_user() -> Result<i64, ParseIntError> {
 }
 
 fn parse_user_input(input: &String) -> Result<i64, ParseIntError> {
-    let result = match &input[0..2] {
-        "0x" => i64::from_str_radix(input.strip_prefix("0x").unwrap(), 16)?,
-        "0b" => i64::from_str_radix(input.strip_prefix("0b").unwrap(), 2)?,
-        "0o" => i64::from_str_radix(input.strip_prefix("0o").unwrap(), 8)?,
+    let prefix: &str = &input[0..2];
+    let result = match prefix {
+        "0x" => i64::from_str_radix(input.strip_prefix(prefix).unwrap(), 16)?,
+        "0b" => i64::from_str_radix(input.strip_prefix(prefix).unwrap(), 2)?,
+        "0o" => i64::from_str_radix(input.strip_prefix(prefix).unwrap(), 8)?,
         _ => input.parse::<i64>()?,
     };
     Ok(result)
@@ -63,16 +64,16 @@ fn group_binary(number: i64) -> String {
     chunks.join(" ")
 }
 
-fn prune_bin(hex_str: String) -> String {
-    if !(&hex_str).starts_with("1") {
-        hex_str
+fn remove_leading_ones(binary_string: String) -> String {
+    if !(&binary_string).starts_with("1") {
+        binary_string
     } else {
-        hex_str.replace(" 1111", "").to_string()
+        binary_string.replace(" 1111", "").to_string()
     }
 }
 
 fn format_binary(number: i64) -> String {
-    prune_bin(group_binary(number))
+    remove_leading_ones(group_binary(number))
 }
 
 fn print_num(number: i64) {
