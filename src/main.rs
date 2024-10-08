@@ -29,7 +29,7 @@ fn parse_user_input(input: &String) -> Result<i64, ParseIntError> {
     let result = match &input[0..2] {
         "0x" => i64::from_str_radix(input.strip_prefix("0x").unwrap(), 16)?,
         "0b" => i64::from_str_radix(input.strip_prefix("0b").unwrap(), 2)?,
-        "0o" => i64::from_str_radix(input.strip_prefix("0 ").unwrap(), 8)?,
+        "0o" => i64::from_str_radix(input.strip_prefix("0o").unwrap(), 8)?,
         _ => input.parse::<i64>()?,
     };
     Ok(result)
