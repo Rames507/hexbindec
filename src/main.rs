@@ -63,11 +63,23 @@ fn group_binary(number: i64) -> String {
     chunks.join(" ")
 }
 
+fn prune_bin(hex_str: String) -> String {
+    if !(&hex_str).starts_with("1") {
+        hex_str
+    } else {
+        hex_str.replace(" 1111", "").to_string()
+    }
+}
+
+fn format_binary(number: i64) -> String {
+    prune_bin(group_binary(number))
+}
+
 fn print_num(number: i64) {
     println!("Your number in different bases:");
     println!("Dec:\t  {}", number);
     println!("Hex:\t{:#X}", number);
-    println!("Bin:\t0b{}", group_binary(number));
+    println!("Bin:\t0b{}", format_binary(number));
     println!("Oct:\t{:#o}", number);
     println!("{}", "-".repeat(20));
 }
