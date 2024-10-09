@@ -26,6 +26,9 @@ fn get_number_from_user() -> Result<i64, ParseIntError> {
 }
 
 fn parse_user_input(input: &String) -> Result<i64, ParseIntError> {
+    if input.len() == 1 {
+        return Ok(input.parse()?);
+    }
     let prefix: &str = &input[0..2];
     let result = match prefix {
         "0x" => i64::from_str_radix(input.strip_prefix(prefix).unwrap(), 16)?,
@@ -73,7 +76,12 @@ fn remove_leading_ones(binary_string: String) -> String {
 }
 
 fn format_binary(number: i64) -> String {
-    remove_leading_ones(group_binary(number))
+    let grouped_bin = group_binary(number);
+    if number < 0 {
+        remove_leading_ones(grouped_bin)
+    } else {
+        grouped_bin
+    }
 }
 
 fn print_num(number: i64) {
