@@ -84,10 +84,18 @@ fn format_binary(number: i64) -> String {
     }
 }
 
+fn format_hex(number: i64) -> String {
+    if number >= 0 {
+        return format!("{:#X}", number);
+    }
+    let hex_str = format!("{:X}", number).trim_start_matches("F").to_string();
+    format!("0xF{hex_str}")
+}
+
 fn print_num(number: i64) {
     println!("Your number in different bases:");
     println!("Dec:\t  {}", number);
-    println!("Hex:\t{:#X}", number);
+    println!("Hex:\t{}", format_hex(number));
     println!("Bin:\t0b{}", format_binary(number));
     println!("Oct:\t{:#o}", number);
     println!("{}", "-".repeat(20));
