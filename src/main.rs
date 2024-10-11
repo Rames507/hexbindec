@@ -26,7 +26,7 @@ fn get_number_from_user() -> Result<i64, ParseIntError> {
 }
 
 fn parse_user_input(input: &String) -> Result<i64, ParseIntError> {
-    if input.len() == 1 {
+    if input.len() < 2 {
         return Ok(input.parse()?);
     }
     let prefix: &str = &input[0..2];
@@ -80,20 +80,33 @@ fn format_binary(number: i64) -> String {
     }
 }
 
-/// Removes duplicate leading 'F's from a hex string.
+/// Converts a number into a hex string
+/// Removes duplicate leading 'F's for negative numbers.
 fn format_hex(number: i64) -> String {
     if number >= 0 {
-        return format!("{:#X}", number);
+        return format!("{:X}", number);
     }
     let hex_str = format!("{:X}", number).trim_start_matches("F").to_string();
-    format!("0xF{hex_str}")
+    format!("F{hex_str}")
 }
 
+
+fn format_octal(number: i64) -> String {
+    if number >= 0 {
+        return format!("{:o}", number);
+    }
+    let mut result_str = String::from("17[...]7");
+    result_str.push_str(format!("{:o}", number)[2..].trim_start_matches("7"));
+    result_str
+}
+
+
 fn print_num(number: i64) {
-    println!("Your number in different bases:");
-    println!("Dec:\t  {}", number);
-    println!("Hex:\t{}", format_hex(number));
-    println!("Bin:\t0b{}", format_binary(number));
-    println!("Oct:\t{:#o}", number);
+    let padding = " ".repeat(2);
+    println!("Here's different representations of your number:");
+    println!("Dec:{padding}  {}", number);
+    println!("Hex:{padding}0x{}", format_hex(number));
+    println!("Bin:{padding}0b{}", format_binary(number));
+    println!("Oct:{padding}0o{}", format_octal(number));
     println!("{}", "-".repeat(20));
 }
