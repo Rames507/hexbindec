@@ -61,26 +61,18 @@ fn group_binary(number: i64) -> String {
     chunks.join(" ")
 }
 
+/// Converts a number to its binary representation grouped into clusters of 4 digits.
 /// Removes duplicate clusters of 4 '1's (separated by spaces)
 /// from the beginning of a binary string.
-fn remove_leading_ones(binary_string: String) -> String {
-    if !(&binary_string).starts_with("1") {
-        binary_string
-    } else {
-        binary_string.replace(" 1111", "").to_string()
-    }
-}
-
 fn format_binary(number: i64) -> String {
     let grouped_bin = group_binary(number);
-    if number < 0 {
-        remove_leading_ones(grouped_bin)
-    } else {
-        grouped_bin
+    if number >= 0 {
+        return grouped_bin;
     }
+    grouped_bin.replace(" 1111", "").to_string()
 }
 
-/// Converts a number into a hex string
+/// Converts a number into a hex string.
 /// Removes duplicate leading 'F's for negative numbers.
 fn format_hex(number: i64) -> String {
     if number >= 0 {
@@ -90,7 +82,8 @@ fn format_hex(number: i64) -> String {
     format!("F{hex_str}")
 }
 
-
+/// Converts a number into an octal string.
+/// Removes duplicate leading '7's for negative numbers.
 fn format_octal(number: i64) -> String {
     if number >= 0 {
         return format!("{:o}", number);
