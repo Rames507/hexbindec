@@ -39,14 +39,8 @@ fn parse_user_input(input: &String) -> Result<i64, ParseIntError> {
     Ok(result)
 }
 
-/// Returns a binary representation of a number with groups of 4 digits separated by a space
-///
-/// # Arguments
-///
-/// * `number`: The number to convert
-///
-/// returns: String
-///
+/// Returns a binary representation of a number with
+/// groups of 4 digits separated by a space.
 fn group_binary(number: i64) -> String {
     let binary = format!("{:b}", number);
     let mut grouped = String::new();
@@ -67,6 +61,8 @@ fn group_binary(number: i64) -> String {
     chunks.join(" ")
 }
 
+/// Removes duplicate clusters of 4 '1's (separated by spaces)
+/// from the beginning of a binary string.
 fn remove_leading_ones(binary_string: String) -> String {
     if !(&binary_string).starts_with("1") {
         binary_string
@@ -84,6 +80,7 @@ fn format_binary(number: i64) -> String {
     }
 }
 
+/// Removes duplicate leading 'F's from a hex string.
 fn format_hex(number: i64) -> String {
     if number >= 0 {
         return format!("{:#X}", number);
