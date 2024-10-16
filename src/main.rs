@@ -20,8 +20,7 @@ fn get_number_from_user() -> Result<i64, ParseIntError> {
     io::stdin()
         .read_line(&mut input)
         .expect("Failed to read line");
-    input = input.trim().to_string();
-
+    input = input.trim().replace(" ", "").to_string();
     parse_user_input(&input)
 }
 
@@ -92,7 +91,6 @@ fn format_octal(number: i64) -> String {
     result_str.push_str(format!("{:o}", number)[2..].trim_start_matches("7"));
     result_str
 }
-
 
 fn print_num(number: i64) {
     let padding = " ".repeat(2);
