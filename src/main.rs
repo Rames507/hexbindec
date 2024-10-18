@@ -38,33 +38,44 @@ fn parse_user_input(input: &String) -> Result<i64, ParseIntError> {
     Ok(result)
 }
 
-/// Returns a binary representation of a number with
-/// groups of 4 digits separated by a space.
-fn group_binary(number: i64) -> String {
-    let binary = format!("{:b}", number);
+fn group_into(
+    input: String,
+    group_size: usize,
+    separator: &str,
+    padding_char: Option<char>,
+) -> String {
+    let pad_size = group_size - (input.len() % group_size);
     let mut grouped = String::new();
+    const TEMP_PAD: &str = "#";
 
-    let padding = 4 - (binary.len() % 4);
-    if padding != 4 {
-        grouped.push_str(&"0".repeat(padding));
+    if pad_size != group_size {
+        match padding_char {
+            Some(pad_char) => grouped.push_str(&pad_char.to_string().repeat(pad_size)),
+            None => grouped.push_str(&TEMP_PAD.repeat(pad_size)),
+        }
     }
-    grouped.push_str(&binary);
+    grouped.push_str(&input);
 
     let chunks: Vec<String> = grouped
         .chars()
         .collect::<Vec<char>>()
-        .chunks(4)
+        .chunks(group_size)
         .map(|chunk| chunk.iter().collect())
         .collect();
 
-    chunks.join(" ")
+    let chunks = chunks.join(separator);
+
+    if None == padding_char {
+        return chunks.trim_start_matches(TEMP_PAD).to_string();
+    }
+    chunks
 }
 
 /// Converts a number to its binary representation grouped into clusters of 4 digits.
 /// Removes duplicate clusters of 4 '1's (separated by spaces)
 /// from the beginning of a binary string.
 fn format_binary(number: i64) -> String {
-    let grouped_bin = group_binary(number);
+    let grouped_bin = group_into(format!("{:b}", number), 4, " ", Some('0'));
     if number >= 0 {
         return grouped_bin;
     }
@@ -75,10 +86,10 @@ fn format_binary(number: i64) -> String {
 /// Removes duplicate leading 'F's for negative numbers.
 fn format_hex(number: i64) -> String {
     if number >= 0 {
-        return format!("{:X}", number);
+        return group_into(format!("{:X}", number), 4, " ", Some('0'));
     }
     let hex_str = format!("{:X}", number).trim_start_matches("F").to_string();
-    format!("F{hex_str}")
+    group_into(format!("F{hex_str}"), 4, " ", Some('0'))
 }
 
 /// Converts a number into an octal string.
@@ -87,15 +98,22 @@ fn format_octal(number: i64) -> String {
     if number >= 0 {
         return format!("{:o}", number);
     }
-    let mut result_str = String::from("17[...]7");
+    let mut result_str = String::from("17[7]7");
     result_str.push_str(format!("{:o}", number)[2..].trim_start_matches("7"));
     result_str
+}
+
+fn format_decimal(number: i64) -> String {
+    if !(number.abs() >= 1000) {
+        return number.to_string();
+    }
+    group_into(number.to_string(), 3, " ", None)
 }
 
 fn print_num(number: i64) {
     let padding = " ".repeat(2);
     println!("Here's different representations of your number:");
-    println!("Dec:{padding}  {}", number);
+    println!("Dec:{padding}  {}", format_decimal(number));
     println!("Hex:{padding}0x{}", format_hex(number));
     println!("Bin:{padding}0b{}", format_binary(number));
     println!("Oct:{padding}0o{}", format_octal(number));
