@@ -38,37 +38,53 @@ fn parse_user_input(input: &String) -> Result<i64, ParseIntError> {
     Ok(result)
 }
 
-fn group_into(
-    input: String,
+/// Groups an input string into batches of `group_size` characters.
+///
+/// # Arguments
+///
+/// * `ungrouped`: The string to be split into groups
+/// * `group_size`: size of individual groups
+/// * `separator`: The separator that is inserted between the groups
+/// * `padding_char`: if a padding character is passed it will be used to fill the first group
+///    in case the input isn't divisible by `group_size`
+///
+/// returns: String
+///
+/// # Examples
+///
+/// ```
+/// assert_eq!("0010 1011", group_into("101011", 4, " ", Some('0')));
+/// ```
+pub fn group_into(
+    ungrouped: String,
     group_size: usize,
     separator: &str,
     padding_char: Option<char>,
 ) -> String {
-    let pad_size = group_size - (input.len() % group_size);
-    let mut grouped = String::new();
-    const TEMP_PAD: &str = "#";
+    // this is needed because even if you don't want padding, it prevents the groups from shifting
+    // (being aligned to the front of the string instead of the back)
+    const TEMP_PAD: char = '#';
 
-    if pad_size != group_size {
-        match padding_char {
-            Some(pad_char) => grouped.push_str(&pad_char.to_string().repeat(pad_size)),
-            None => grouped.push_str(&TEMP_PAD.repeat(pad_size)),
-        }
-    }
-    grouped.push_str(&input);
+    let pad_size = (group_size - (ungrouped.len() % group_size)) % group_size;
+    let padding = padding_char
+        .unwrap_or(TEMP_PAD)
+        .to_string()
+        .repeat(pad_size);
+    let padded_string = padding + &ungrouped;
 
-    let chunks: Vec<String> = grouped
-        .chars()
-        .collect::<Vec<char>>()
+    let chunks: Vec<String> = padded_string
+        .as_bytes()
         .chunks(group_size)
-        .map(|chunk| chunk.iter().collect())
+        .map(|chunk| std::str::from_utf8(chunk).unwrap().to_string())
         .collect();
 
-    let chunks = chunks.join(separator);
+    let grouped_string = chunks.join(separator);
 
-    if None == padding_char {
-        return chunks.trim_start_matches(TEMP_PAD).to_string();
+    if padding_char.is_none() {
+        grouped_string.trim_start_matches(TEMP_PAD).to_string()
+    } else {
+        grouped_string
     }
-    chunks
 }
 
 /// Converts a number to its binary representation grouped into clusters of 4 digits.
