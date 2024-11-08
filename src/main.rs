@@ -3,7 +3,12 @@ use std::num::ParseIntError;
 
 fn main() {
     loop {
-        let number = match get_number_from_user() {
+        let user_input = get_user_input();
+        if ["c", "clear", "cls"].contains(&user_input.as_str()) {
+            print!("{}c", 27 as char); // clears the terminal screen
+            continue;
+        }
+        let number = match parse_user_input(&user_input) {
             Ok(num) => num,
             Err(e) => {
                 println!("Failed to parse the number: {e}");
@@ -14,14 +19,13 @@ fn main() {
     }
 }
 
-fn get_number_from_user() -> Result<i64, ParseIntError> {
+fn get_user_input() -> String {
     let mut input = String::new();
     println!("Please enter a number (0x/0b/0o):");
     io::stdin()
         .read_line(&mut input)
         .expect("Failed to read line");
-    input = input.trim().replace(" ", "").to_string();
-    parse_user_input(&input)
+    input.trim().replace(" ", "").to_string()
 }
 
 fn parse_user_input(input: &String) -> Result<i64, ParseIntError> {
