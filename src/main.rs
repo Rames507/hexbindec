@@ -1,17 +1,29 @@
+mod help;
+
 use std::io;
 use std::num::ParseIntError;
 
 fn main() {
     loop {
         let user_input = get_user_input();
-        if ["c", "clear", "cls"].contains(&user_input.as_str()) {
-            print!("{}c", 27 as char); // clears the terminal screen
-            continue;
+
+        match user_input.as_str() {
+            "c" | "clear" | "cls" => {
+                print!("{}c", 27 as char); // clears the terminal screen
+                continue;
+            }
+            "h" | "help" | "?" => {
+                help::print_help_msg();
+                continue;
+            }
+            _ => (),
         }
+
         let number = match parse_user_input(&user_input) {
             Ok(num) => num,
             Err(e) => {
                 println!("Failed to parse the number: {e}");
+                println!(r#"Type "help" or "?" for detailed help."#);
                 continue;
             }
         };
